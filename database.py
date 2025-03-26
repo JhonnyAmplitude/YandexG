@@ -1,8 +1,13 @@
+import os
+
+from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
+
+load_dotenv()
 # Строка подключения к базе данных
-DATABASE_URL = "postgresql+asyncpg://postgres:mysecretpassword@localhost:5434/mydatabase"
+DATABASE_URL = os.getenv("DB_URL")
 
 # Создание асинхронного движка
 engine = create_async_engine(DATABASE_URL, echo=True)
