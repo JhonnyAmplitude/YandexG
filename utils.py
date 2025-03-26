@@ -8,18 +8,20 @@ YANDEX_DIRECT_API_URL = "https://api-sandbox.direct.yandex.com/json/v5/"
 logger = logging.getLogger(__name__)
 
 
-async def request_yandex_direct(method: str, token: str, params: Optional[dict] = None) -> Optional[dict]:
-    """Отправляет запрос в Яндекс.Директ API."""
+async def request_yandex_direct(
+    method: str, token: str, resource: str, params: Optional[dict] = None
+) -> Optional[dict]:
+    """Отправляет запрос в Яндекс.Директ API с возможностью динамического указания ресурса."""
     headers = {
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json",
         "Accept-Language": "ru",
     }
 
-    url = f"{YANDEX_DIRECT_API_URL}campaigns"  # Указываем правильный ресурс (campaigns)
+    url = f"{YANDEX_DIRECT_API_URL}{resource}"  # Динамическая подстановка ресурса
 
     data = {
-        "method": method,  # Добавляем method в тело запроса
+        "method": method,
         "params": params if params else {}
     }
 
