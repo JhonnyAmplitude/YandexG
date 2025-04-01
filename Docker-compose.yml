@@ -9,9 +9,17 @@ services:
       POSTGRES_PASSWORD: mysecretpassword
       POSTGRES_DB: mydatabase
     ports:
-      - "5434:5432"  # Пробросим порт 5434 на хосте
+      - "5434:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
     networks:
       - app-network
 
@@ -22,13 +30,14 @@ services:
     container_name: app
     environment:
       DATABASE_URL: postgresql+asyncpg://postgres:mysecretpassword@postgres:5432/mydatabase
+      REDIS_URL: redis://redis:6379
     depends_on:
       - postgres
+      - redis
     networks:
       - app-network
     ports:
       - "8000:8000"
-
 
 networks:
   app-network:
