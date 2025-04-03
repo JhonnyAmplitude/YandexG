@@ -38,7 +38,7 @@ services:
     ports:
       - "8001:8000"
     volumes:
-      - ./:/app
+      - /home/maksim/yandexG:/app
 
 networks:
   app-network:
