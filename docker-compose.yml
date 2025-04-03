@@ -38,7 +38,7 @@ services:
     ports:
       - "8001:8000"
     volumes:
-      - yandexg_data:/app
+      - app_backend
 
 networks:
   app-network:
