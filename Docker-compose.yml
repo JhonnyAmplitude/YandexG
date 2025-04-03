@@ -38,6 +38,8 @@ services:
       - app-network
     ports:
       - "8000:8000"
+    volumes:
+      - .:/app
 
 networks:
   app-network:
