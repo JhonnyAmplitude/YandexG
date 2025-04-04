@@ -38,7 +38,7 @@ services:
     ports:
       - "8001:8000"
     volumes:
-      - /home/maksim/yandexG:/app
+      - /usr/local/flexites/projects_ext/YandexG:/app
 
 networks:
   app-network:
