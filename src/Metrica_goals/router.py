@@ -12,6 +12,8 @@ router = APIRouter(
 )
 
 YANDEX_OAUTH_TOKEN = os.getenv("API_TOKEN")
+COUNTER_ID = 181494
+
 
 class GoalInfo(BaseModel):
     id: int
@@ -67,22 +69,22 @@ def get_month_ranges(start_date: datetime, end_date: datetime) -> List[tuple[str
 
     return result
 
-@router.get("/{counter_id}", response_model=Dict[str, List[GoalInfo]])
+@router.get("/", response_model=Dict[str, List[GoalInfo]])
 def get_goals_by_date_range(
-    counter_id: int,
     start_date: datetime = Query(..., description="Формат: YYYY-MM-DD"),
     end_date: datetime = Query(..., description="Формат: YYYY-MM-DD"),
 ):
     if start_date > end_date:
         raise HTTPException(status_code=400, detail="start_date не может быть позже end_date")
 
-    goals = get_goals(counter_id)
+    # Используем зашитое значение COUNTER_ID
+    goals = get_goals(COUNTER_ID)
     result: Dict[str, List[GoalInfo]] = {}
 
     for month_str, from_date, to_date in get_month_ranges(start_date, end_date):
         month_goals = []
         for goal in goals:
-            conversions = get_goal_stats(counter_id, goal['id'], from_date, to_date)
+            conversions = get_goal_stats(COUNTER_ID, goal['id'], from_date, to_date)
             month_goals.append(GoalInfo(
                 id=goal['id'],
                 name=goal['name'],
