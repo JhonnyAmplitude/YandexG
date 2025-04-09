@@ -1,5 +1,5 @@
 from celery.schedules import crontab
-from ReportsDirect.celery import celery_app
+from src.ReportsDirect import celery_app
 
 celery_app.conf.beat_schedule = {
     "update_reports_cache_daily": {

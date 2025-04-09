@@ -2,11 +2,11 @@ import json
 import httpx
 import logging
 from datetime import datetime
-from ReportsDirect.celery import celery_app
-from database import get_db
+from src.ReportsDirect.celery import celery_app
+from src.database import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from Users.models import User
+from src.Users.models import User
 import redis.asyncio as redis
 
 logger = logging.getLogger(__name__)

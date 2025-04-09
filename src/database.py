@@ -7,7 +7,7 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 
 load_dotenv()
 # Строка подключения к базе данных
-DATABASE_URL = os.getenv("DB_URL")
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 # Создание асинхронного движка
 engine = create_async_engine(DATABASE_URL, echo=True)

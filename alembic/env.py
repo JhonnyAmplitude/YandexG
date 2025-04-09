@@ -7,8 +7,7 @@ from os.path import dirname, abspath
 
 from alembic import context
 
-from database import Base
-from Users import models
+from src.database import Base
 
 sys.path.insert(0, dirname(dirname (dirname(abspath(__file__ )))))
 

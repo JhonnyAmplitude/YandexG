@@ -2,6 +2,7 @@ from fastapi import HTTPException, Query, APIRouter
 import requests
 from dotenv import load_dotenv
 from  datetime import date
+
 import os
 
 router = APIRouter()
@@ -10,9 +11,10 @@ load_dotenv()
 
 API_URL = os.getenv("API_METRICA_URL")
 API_COUNTER_URL = os.getenv("API_METRICA_COUNTER_URL")
-API_TOKEN = os.getenv("API_METRICA_TOKEN")
+API_TOKEN = os.getenv("API_TOKEN")
 
 COUNTER_IDS = [181494, 72372934]
+
 
 @router.get("/metrika_chart/")
 async def get_metrika_data():
@@ -26,7 +28,6 @@ async def get_metrika_data():
             'date2': '2025-03-31',
             'metrics': 'ym:s:visits,ym:s:users,ym:s:bounceRate,ym:s:pageDepth,ym:s:avgVisitDurationSeconds',
             'dimensions': 'ym:s:trafficSource,ym:s:date',
-
             'group': 'Day',
             'accuracy': 'full',
             'limit': 100
@@ -60,7 +61,11 @@ async def get_metrika_data():
                         "avg_visit_duration": metrics[4]
                     })
 
-                results[counter_id] = cleaned_data
+                # Сортировка данных по дате
+                sorted_data = sorted(cleaned_data, key=lambda x: x["date"])
+
+                # Сохраняем отсортированные данные в результат
+                results[counter_id] = sorted_data
                 return results
             except ValueError:
                 return {"error": "Ошибка при разборе JSON-ответа", "response_text": response.text}
@@ -70,6 +75,7 @@ async def get_metrika_data():
                 "status_code": response.status_code,
                 "response_text": response.text
             }
+    return results
 
 
 @router.get("/metrika_summary/")

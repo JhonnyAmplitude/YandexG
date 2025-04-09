@@ -4,8 +4,8 @@ from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from dotenv import load_dotenv
-from database import get_db
-from Users.models import User
+from src.database import get_db
+from src.Users.models import User
 import logging
 from datetime import datetime
 
