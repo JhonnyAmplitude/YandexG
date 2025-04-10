@@ -7,7 +7,7 @@ import os
 from typing import List, Dict
 
 router = APIRouter(
-    prefix="/goals",
+    prefix="/metrika_goals",
     tags=["Yandex Goals"]
 )
 
