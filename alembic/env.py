@@ -1,3 +1,4 @@
+import os
 import sys
 from logging.config import fileConfig
 
@@ -9,14 +10,19 @@ from alembic import context
 
 from src.database import Base
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+
 sys.path.insert(0, dirname(dirname (dirname(abspath(__file__ )))))
 
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
-config.set_main_option("sqlalchemy.url",
-                       "postgresql+asyncpg://postgres:mysecretpassword@localhost:5434/mydatabase?async_fallback=True" )
+config.set_main_option("sqlalchemy.url",DATABASE_URL)
 
 
 # Interpret the config file for Python logging.
