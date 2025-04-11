@@ -14,7 +14,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = os.getenv("DATABASE_URL_ALEMBIC")
 
 sys.path.insert(0, dirname(dirname (dirname(abspath(__file__ )))))
 
