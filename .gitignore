@@ -155,6 +155,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+*.pyc
+
+
 # pytype static type analyzer
 .pytype/
 
@@ -174,4 +177,3 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 .env
-__pycache__/
