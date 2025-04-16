@@ -4,6 +4,7 @@ from src.Campanies.router import router as campanos_router
 from src.ReportsDirect.router import router as report_router
 from src.ReportsMetrica.router import router as metrics_router
 from src.Metrica_goals.router import router as goals_router
+from src.goals_metrika.router import router as goals_statistic_router
 
 app = FastAPI()
 
@@ -12,6 +13,11 @@ app.include_router(campanos_router, tags=["campanies"])
 app.include_router(report_router, tags=["direct_reports"])
 app.include_router(metrics_router, tags=["metrica_reports"])
 app.include_router(goals_router)
+
+app.include_router(goals_statistic_router)
+
+
+
 
 
 
