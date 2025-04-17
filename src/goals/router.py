@@ -1,7 +1,7 @@
 import os
 from datetime import datetime, date, timedelta
 from collections import defaultdict
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from fastapi import APIRouter, Query, HTTPException, Depends
 from httpx import AsyncClient
@@ -98,28 +98,24 @@ async def save_goal_stats_final(session: AsyncSession, result, group_by):
         raise e
 
 
-@router.get("/statistics", summary="Получить статистику по целям",)
+@router.get("/statistics", summary="Получить статистики по целям")
 async def get_parsed_goal_metrics(
-        date1: date = Query(...),
-        date2: date = Query(...),
-        ids: str = Query("181494"),
-        group_by: str = Query("day", pattern="^(day|week|month)$"),
-        filter_goals: str = Query("", description="Передаем через запятую значения id счетчиков"),
-        session: AsyncSession = Depends(get_db)
+    date1: date = Query(...),
+    date2: date = Query(...),
+    ids: str = Query("181494"),
+    group_by: str = Query("day", pattern="^(day|week|month)$"),
+    goal_ids_filter: Optional[List[int]] = Query(None),
+    session: AsyncSession = Depends(get_db)
 ) -> Dict:
-    """
-    Получение статистики по целям с возможностью фильтрации по целям.
-    """
-    # Получаем все цели
     all_goals = await get_goals(ids)
-    filtered_goals = {gid: name for gid, name in all_goals.items() if gid in GOAL_IDS}
-
-    # Получаем список целей, переданных в фильтрации (если есть)
-    if filter_goals:
-        filter_goal_ids = set(map(int, filter_goals.split(",")))
-        filtered_goals = {gid: name for gid, name in filtered_goals.items() if gid in filter_goal_ids}
-
+    filtered_goals = {
+        gid: name for gid, name in all_goals.items()
+        if (goal_ids_filter is None or gid in goal_ids_filter)
+    }
     goal_ids = list(filtered_goals.keys())
+
+    if not goal_ids:
+        raise HTTPException(status_code=400, detail="No goals found for the given filter")
 
     metrics = [f"ym:s:goal{goal_id}{suffix}" for goal_id in goal_ids for suffix in METRIC_SUFFIXES]
     params = {
@@ -187,6 +183,12 @@ async def get_parsed_goal_metrics(
             g["visits"] += values["visits"]
             g["count"] += 1
 
+    month_names_ru = {
+        "01": "январь", "02": "февраль", "03": "март", "04": "апрель",
+        "05": "май", "06": "июнь", "07": "июль", "08": "август",
+        "09": "сентябрь", "10": "октябрь", "11": "ноябрь", "12": "декабрь"
+    }
+
     result = []
     for group_key in sorted(grouped.keys()):
         goals_data = []
@@ -198,9 +200,28 @@ async def get_parsed_goal_metrics(
                 "visits": g["visits"]
             })
 
-        result.append({"date": group_key, "goals": goals_data})
+        # Генерация label
+        if group_by == "month":
+            year, month = group_key.split("-")
+            label = f"{year} - {month_names_ru[month]}"
+        elif group_by == "week":
+            year, week = group_key.split("-W")
+            year, week = int(year), int(week)
+            try:
+                monday = date.fromisocalendar(year, week, 1)
+                sunday = date.fromisocalendar(year, week, 7)
+                label = f"{monday.strftime('%Y-%m-%d')} — {sunday.strftime('%Y-%m-%d')}"
+            except ValueError:
+                label = f"{year} - {week} неделя"
+        else:
+            label = group_key
 
-    # Сохраняем статистику
+        result.append({
+            "date": group_key,
+            "label": label,
+            "goals": goals_data
+        })
+
     await save_goal_stats_final(session, result, group_by)
 
     return {
