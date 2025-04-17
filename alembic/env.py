@@ -37,6 +37,7 @@ if config.config_file_name is not None:
 from src.Metrica_goals import models
 from src.Users import models
 from src.goals_metrika import models
+from src.goals import models
 
 target_metadata = Base.metadata
 

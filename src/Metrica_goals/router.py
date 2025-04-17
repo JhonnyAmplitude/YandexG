@@ -40,7 +40,7 @@ class GoalInfo(BaseModel):
 
 
 async def fetch_goals(client: httpx.AsyncClient, counter_id: int) -> list[dict]:
-    url = f"https://api-metrika.yandex.net/management/v1/counter/{counter_id}/goals"
+    url = f"https://api-metrika.yandex.ru/management/v1/counter/{counter_id}/goals"
     headers = {"Authorization": f"OAuth {YANDEX_OAUTH_TOKEN}"}
 
     async with yandex_limiter:
@@ -51,13 +51,14 @@ async def fetch_goals(client: httpx.AsyncClient, counter_id: int) -> list[dict]:
 
 
 async def fetch_goal_stats(client: httpx.AsyncClient, counter_id: int, goal_id: int, date1: str, date2: str) -> int:
-    url = "https://api-metrika.yandex.net/stat/v1/data"
+    url = "https://api-metrika.yandex.ru/stat/v1/data"
     headers = {"Authorization": f"OAuth {YANDEX_OAUTH_TOKEN}"}
     params = {
         "ids": counter_id,
         "metrics": f"ym:s:goal{goal_id}reaches",
         "date1": date1,
         "date2": date2,
+        "dimensions": "ym:s:date",
         "accuracy": "full"
     }
 

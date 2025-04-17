@@ -1,12 +1,11 @@
 from pydantic import BaseModel
 from datetime import date
 
-class GoalStatSchema(BaseModel):
+class GoalInfo(BaseModel):
     id: int
-    goal_name: str
-    goal_type: str
+    name: str
+    type: str
     conversions: int
-    date: date
 
     class Config:
         from_attributes = True
